@@ -1,0 +1,59 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+###
+# Grzegorz Wieczorek 07.09.2009 00:43
+# gg: 5905482
+# jabb: grzew@jabster.pl
+# email: grzewster@gmail.com
+# 
+###
+
+import urllib2
+import BeautifulSoup
+import re
+import sys
+
+zmienne=[]
+
+for arg in sys.argv:
+    zmienne.append(arg)
+
+def oczyszczarka(value):
+    return re.sub(r'<[^>]*?>', '', value) 
+
+dzien = zmienne[1]
+miesiac = zmienne[2]
+rok = zmienne[3]
+#rok = "2008"
+#miesiac = "October"
+#dzien = "6"
+
+#strona = "http://en.wikipedia.org/wiki/Portal:Current_events/"+rok+"_"+miesiac+"_"+dzien
+
+ 
+def mydelniczka (url):
+	request = urllib2.Request(url)
+	user_agent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.14) Gecko/20080418 Ubuntu/7.10 (gutsy) Firefox/2.0.0.14"
+	request.add_header("User-Agent", user_agent)
+	pagefile=urllib2.urlopen(request)
+	soup=BeautifulSoup.BeautifulSoup(pagefile)
+	realurl = pagefile.geturl()
+	pagefile.close()
+	return (soup, realurl)
+
+def dzialaj(rok, miesiac,dzien):
+    strona = "http://en.wikipedia.org/wiki/Portal:Current_events/"+rok+"_"+miesiac+"_"+dzien    
+
+    (soup, url) = mydelniczka(strona)
+    # print soup.prettify()
+    for ul in soup.findAll("td", { "class" : "description" } ):
+        wyniki = oczyszczarka(str(ul)).split("\n")
+    return wyniki
+
+w = dzialaj(rok,miesiac,dzien)
+
+for i in range(len(w)):
+    if w[i] != "":
+        print w[i]
+
