@@ -13,6 +13,7 @@ import urllib2
 import BeautifulSoup
 import re
 import sys
+from sqlalchemy import *
 
 zmienne=[]
 
@@ -30,23 +31,60 @@ class wiki_parser:
             request = urllib2.Request(url)
             user_agent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.14) Gecko/20080418 Ubuntu/7.10 (gutsy) Firefox/2.0.0.14"
             request.add_header("User-Agent", user_agent)
-            pagefile=urllib2.urlopen(request)
-            soup=BeautifulSoup.BeautifulSoup(pagefile)
+            pagefile = urllib2.urlopen(request)
+            soup = BeautifulSoup.BeautifulSoup(pagefile)
             realurl = pagefile.geturl()
             pagefile.close()
             return (soup, realurl)
 
-    def oczyszczarka(self,value):
+    def tagi_html(self,value):
         return re.sub(r'<[^>]*?>', '', value) 
 
     def dzialaj(self,rok, miesiac,dzien):
         strona = "http://en.wikipedia.org/wiki/Portal:Current_events/"+rok+"_"+miesiac+"_"+dzien    
         (soup, url) = self.mydelniczka(strona)
         for ul in soup.findAll("td", { "class" : "description" } ):
-            wyniki = self.oczyszczarka(str(ul)).split("\n")
+            wyniki = self.tagi_html(str(ul)).split("\n")
         return wyniki
+
+class baza:
+
+    def inicjacja(self):
+        global db
+        # konfiguracja
+        login = "root"
+        haslo = "dupa"
+        host = "localhost"
+        baza = "parser"
+        db = create_engine("mysql://"+login+":"+haslo+"@"+host+"/"+baza+"")
+
+        # przypisanie tabel do MetaData
+        metadata = MetaData(db)
+
+        #parser = Table("event", metadata, autoload=True)
+
+    def nowa_baza(self):
+        metadata = MetaData(db)
+        # definicja tabeli
+        event = Table("event", metadata,
+            Column("id", Integer),
+            Column("date", Date, primary_key=True),
+            Column("description", String(255))
+        )
+        # utworzenie tabeli
+        event.create(checkfirst=True)
+
+
+    def dodaj(self, idata, idescription):
+        i = parser.insert()
+        i.execute(data = idata, description = idescription)
+        
 
 w = wiki_parser()
 lista = w.dzialaj(rok,miesiac,dzien)
+b = baza()
+b.inicjacja()
+b.nowa_baza()
+#b.dodaj()
 
 print lista[2]
