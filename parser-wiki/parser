@@ -53,9 +53,9 @@ class baza:
         global db
         # konfiguracja
         login = "root"
-        haslo = "dupa"
+        haslo = "fallout"
         host = "localhost"
-        baza = "parser"
+        baza = "market"
         db = create_engine("mysql://"+login+":"+haslo+"@"+host+"/"+baza+"")
 
         # przypisanie tabel do MetaData
