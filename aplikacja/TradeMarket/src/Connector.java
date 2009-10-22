@@ -2,6 +2,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+// Singleton class
 
 public class Connector {
 	
@@ -26,18 +27,18 @@ public class Connector {
 	}
 	
 	public Session getSession() {
+		if (session == null) {
+			SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+			session = sessionFactory.openSession();
+		}
 		return session;
 	}
 	
-	public Session createSession() {
-		SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-		session = sessionFactory.openSession();
-		return session;
-	}
 	
 	public void closeSession() {
 		session.flush();
-		session.close();		
+		session.close();
+		session = null;
 	}
 	
 	

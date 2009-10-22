@@ -14,8 +14,8 @@ public class TradeMarket {
 		
 		try{
 			Connector connector = Connector.getConnector();
-			Session session = connector.createSession();
-			MainGui window = new MainGui();
+			Session session = connector.getSession();
+			Gui window = new Gui();
 			window.setVisible(true);
 		}
 		catch(Exception e){
