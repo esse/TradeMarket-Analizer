@@ -1,6 +1,7 @@
 
 import java.awt.event.*;
 import java.util.List;
+import javassist.bytecode.Descriptor.Iterator;
 
 /*
  * To change this template, choose Tools | Templates
@@ -90,10 +91,14 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent ev) {
 		Connector connector = Connector.getConnector();
-                String query = "from Event where date = '" + datefield.getText() + "'";
-		List list = connector.getSession().createQuery(query).list();
-		Event event = (Event) list.get(0);
-		jTextArea1.append(event.getDescription());
+        String query = "from Event where date = '" + datefield.getText() + "'";
+		List<Event> list = connector.getSession().createQuery(query).list();
+		String events = "";
+        for (java.util.Iterator<Event> i = list.iterator(); i.hasNext(); ) {
+        	events = events + i.next().getDescription() + "\n";
+        }
+//		Event event = (Event) list.get(0);
+		jTextArea1.append(events);
 	}
 
 }
