@@ -14,20 +14,22 @@ import BeautifulSoup
 import re
 import sys
 from sqlalchemy import *
+from cfg import dane
+import datetime
 
 zmienne=[]
 
 for arg in sys.argv:
     zmienne.append(arg)
 
-dzien = zmienne[1]
-miesiac = zmienne[2]
-rok = zmienne[3]
-
 
 class wiki_parser:
+
+    ##### pobieranie danych #####
+
+    ### Inicjowanie przegladarki - oszukiwanie wikipedii przed 403
  
-    def mydelniczka(self,url):
+    def przegladarka(self,url):
             request = urllib2.Request(url)
             user_agent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.14) Gecko/20080418 Ubuntu/7.10 (gutsy) Firefox/2.0.0.14"
             request.add_header("User-Agent", user_agent)
@@ -37,54 +39,119 @@ class wiki_parser:
             pagefile.close()
             return (soup, realurl)
 
-    def tagi_html(self,value):
-        return re.sub(r'<[^>]*?>', '', value) 
+    ### Usuwanie zbednych tagow html
 
-    def dzialaj(self,rok, miesiac,dzien):
-        strona = "http://en.wikipedia.org/wiki/Portal:Current_events/"+rok+"_"+miesiac+"_"+dzien    
-        (soup, url) = self.mydelniczka(strona)
+    def tagi_html(self,value):
+        return re.sub(r'<[^>]*?>', '', value)
+
+    ### Bezposrednie pobieranie danych ze strony wikipedii
+
+    def pobierz_dane(self,rok, miesiac,dzien):
+        strona = "http://en.wikipedia.org/wiki/Portal:Current_events/"+rok+"_"+miesiac+"_"+dzien
+        (soup, url) = self.przegladarka(strona)
         for ul in soup.findAll("td", { "class" : "description" } ):
             wyniki = self.tagi_html(str(ul)).split("\n")
         return wyniki
 
-class baza:
+    ##### koniec pobierania danych #####
 
-    def inicjacja(self):
-        global db
-        # konfiguracja
-        login = "root"
-        haslo = "dupa"
-        host = "localhost"
-        baza = "parser"
-        db = create_engine("mysql://"+login+":"+haslo+"@"+host+"/"+baza+"")
+    ##### baza danych #####
 
+    ### Nawiazywanie polaczenia z baza danych
+
+    def inicjacja_bazy(self):
+        global db, metadata
+        db = create_engine("mysql://"+dane()[0]+":"+dane()[1]+"@"+dane()[2]+"/"+dane()[3]+"")
         # przypisanie tabel do MetaData
         metadata = MetaData(db)
 
-        #parser = Table("event", metadata, autoload=True)
+    ### Jesli w bazie nie ma naszej tabeli, to ta funkcja ja tworzy
 
     def nowa_baza(self):
-        metadata = MetaData(db)
         # definicja tabeli
         event = Table("event", metadata,
-            Column("id", Integer),
-            Column("date", Date, primary_key=True),
-            Column("description", String(255))
+            Column("id", Integer, primary_key=True),
+            Column("date", Date),
+            Column("description", String(600))
         )
-        # utworzenie tabeli
+        # utworzenie tabeli jesli nie istnieje
         event.create(checkfirst=True)
 
+    ### Funkcja dodawania danych do bazy danych
 
     def dodaj(self, idata, idescription):
+        parser = Table("event", metadata, autoload=True)
         i = parser.insert()
-        i.execute(data = idata, description = idescription)
+        i.execute(date = idata, description = idescription)
+
+    ##### koniec bazy danych #####
+
+    ##### funkcje daty #####
+
+    #### Zmiana miesiacy na potrzebe wikipedii
+
+    def miesiace(self,m):
+        if m == "01":
+            miesiac = "January"
+        elif m == "02":
+            miesiac = "February"
+        elif m == "03":
+            miesiac = "March"
+        elif m == "04":
+            miesiac = "April"
+        elif m == "05":
+            miesiac = "May"
+        elif m == "06":
+            miesiac = "June"
+        elif m == "07":
+            miesiac = "July"
+        elif m == "08":
+            miesiac = "August"
+        elif m == "09":
+            miesiac = "September"
+        elif m == "10":
+            miesiac = "October"
+        elif m == "11":
+            miesiac = "November"
+        elif m == "12":
+            miesiac = "December"
+        return miesiac
+
+    ### Funkcja przeliczajaca odcinki czasu, wykonuje funkcje dodawania do bazy
+
+    def czas(self,rok_start,miesiac_start,dzien_start,rok_end,miesiac_end,dzien_end):
+        delta = datetime.timedelta(1)
+        start = datetime.datetime(rok_start,miesiac_start,dzien_start)
+        end = datetime.datetime(rok_end,miesiac_end,dzien_end)
+        czas = []
+        while start <= end:
+            tmp = str(start)[:10].split("-")
+            start+=delta
+            miesiac = tmp[1]
+            t= self.miesiace(tmp[1])
+            tmp[1]=t
+            lista = self.pobierz_dane(tmp[0],tmp[1],tmp[2])
+            for i in range(len(lista)):
+                if lista[i][-1:] != ":":    # pozbywanie sie zbednych i pustych informacji z wikipedii
+                    if lista[i] != "":
+                        self.dodaj(datetime.date(int(tmp[0]),int(miesiac),int(tmp[2])),lista[i])
+
+    ##### koniec funkcji daty #####
         
 
 w = wiki_parser()
-lista = w.dzialaj(rok,miesiac,dzien)
-b = baza()
-b.inicjacja()
-b.nowa_baza()
-#b.dodaj()
 
-print lista[2]
+zmienne_start = zmienne[1].split("-")
+zmienne_end = zmienne[2].split("-")
+
+rok_start = int(zmienne_start[0])
+miesiac_start = int(zmienne_start[1])
+dzien_start = int(zmienne_start[2])
+rok_end = int(zmienne_end[0])
+miesiac_end = int(zmienne_end[1])
+dzien_end = int(zmienne_end[2])
+
+
+w.inicjacja_bazy()
+w.nowa_baza()
+w.czas(rok_start,miesiac_start,dzien_start,rok_end,miesiac_end,dzien_end)
