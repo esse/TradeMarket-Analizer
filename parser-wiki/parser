@@ -55,7 +55,18 @@ class wiki_parser:
 
     ##### koniec pobierania danych #####
 
+<<<<<<< HEAD:parser-wiki/parser
     ##### baza danych #####
+=======
+    def inicjacja(self):
+        global db
+        # konfiguracja
+        login = "root"
+        haslo = "fallout"
+        host = "localhost"
+        baza = "market"
+        db = create_engine("mysql://"+login+":"+haslo+"@"+host+"/"+baza+"")
+>>>>>>> 71ba4fd956e110edb8b98c177bcb5f1439f06b85:parser-wiki/parser
 
     ### Nawiazywanie polaczenia z baza danych
 
