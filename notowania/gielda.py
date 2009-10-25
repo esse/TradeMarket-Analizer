@@ -1,132 +1,93 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import sys
-import sqlalchemy
-import urllib
-import time
+#Parser danych gieldowych
+# manequin 2009/10/26
 
-### data wejsciowa ###
-date = "20090115"
-#date = str(sys.argv[1])
+import sys
+import os
+from sqlalchemy import *
+import urllib
+from shutil import copyfile
+
+copyfile("../parser-wiki/cfg.py", "./cfg.py")
+from cfg import dane
+
+date_start = str(sys.argv[1][0:4])+str(sys.argv[1][5:7])+str(sys.argv[1][8:10])
+date_end = str(sys.argv[2][0:4])+str(sys.argv[2][5:7])+str(sys.argv[2][8:10])
+if len(sys.argv) > 3:
+    debug = sys.argv[3]=="-d"
+else:
+    debug=0
 
 class gielda:
+    
+    def update_files(self):
+        if debug:
+            print "pobieranie danych..."
+        temp_zip = "./dane/temp_zip.zip"
+        download_web=urllib.urlopen("http://bossa.pl/pub/indzagr/mstock/mstzgr.zip")
+        download_local=open(temp_zip,'w')
+        download_local.write(download_web.read())
+        download_web.close()
+        download_local.close()
+        if debug:
+            print "rozpakowywanie archiwum..."
+        import zipfile
+        pack=zipfile.ZipFile(temp_zip,'r')
+        for name in pack.namelist():
+            pack.extract(name, "./dane/")
+        os.remove(temp_zip)    
+    
+    def read(self, start, end):
+        spolki=[]
+        folder="./dane/"
+        for filename in os.listdir(folder):
+            spolka=[]
+            data=open(folder+filename,'r').read()
+            if debug:
+                sys.stdout.write ("trwa wyodrębnianie danych spółki: "+ str(filename.split('.')[0]))
+            for i in data.splitlines()[1:-1]:
+                line=i.split(',')
+                element=line[0],line[1],line[5]
+                if int(start) <= int(element[1]) <= int(end):
+                    spolka.append(element)
+            spolki.append(spolka)
+            if debug:
+                print ("        [OK]")
+        return (spolki)
 
-    def getdata(self, date):
-        if int(date[0:6]) == int((time.strftime('%Y%m'))):
-            notowanie = 'http://bossa.pl/pub/ciagle/omega/cgl/'+date+'.txt'
-            data = str(urllib.urlopen(notowanie).read())
-        elif (int(date[0:4])==int(time.strftime('%Y')) and (int(time.strftime("%m"))-int(date[4:6]))<3):
-            import zipfile
-            import os
-            if not os.path.exists(str("dane/"+date+".txt")):
-                import zipfile              
-                if not os.path.exists(str("dane/zip/"+date[4:6]+"-"+date[0:4]+".zip")):
-                    url=str("http://bossa.pl/pub/ciagle/omega/cgl/"+date[4:6]+"-"+date[0:4]+".zip")
-                    download_web= urllib.urlopen(url)
-                    download_local= open("./dane/zip/"+url.split('/')[-1], 'w')
-                    download_local.write(download_web.read())
-                    download_web.close()
-                    download_local.close()
-                #zip pobrany, a przynajmniej mam taka nadzieje... mozna go sprobowac rozpakowywac
-                pathtozip= str("dane/zip/"+date[4:6]+"-"+date[0:4]+".zip")
-                pathtotxt= "dane/"
-                sourcezip=zipfile.ZipFile(pathtozip, 'r')
-                for name in sourcezip.namelist():
-                    if name.find('.txt')!= -1:
-                        sourcezip.extract(name, pathtotxt)
-                sourcezip.close()
-            data=open(str("dane/"+date+".txt")).read()
-            
-        elif (int(date[0:4])==int(time.strftime('%Y'))):
-            import zipfile
-            import os
-            if not os.path.exists(str("dane/"+date+".txt")):
-                import zipfile              
-                if not os.path.exists(str("dane/zip/"+date[0:4]+"a.zip")):
-                    url=str("http://bossa.pl/pub/ciagle/omega/cgl/"+date[0:4]+"a.zip")
-                    download_web= urllib.urlopen(url)
-                    download_local= open("./dane/zip/"+url.split('/')[-1], 'w')
-                    download_local.write(download_web.read())
-                    download_web.close()
-                    download_local.close()
-                pathtozip= str("dane/zip/"+date[0:4]+"a.zip")
-                pathtotxt= "dane/zip/"
-                sourcezip=zipfile.ZipFile(pathtozip, 'r')
-                for name in sourcezip.namelist():
-                    if name.find('.zip')!= -1:
-                        sourcezip.extract(name, pathtotxt)
-                sourcezip.close()
-            #zipy rozpakowane, dalej jedziemy jak wczesniej... wiem, ze to nie jest ladne, ale dziala, sorry :P
-                if not os.path.exists(str("dane/zip/"+date[4:6]+"-"+date[0:4]+".zip")):
-                    url=str("http://bossa.pl/pub/ciagle/omega/cgl/"+date[4:6]+"-"+date[0:4]+".zip")
-                    download_web= urllib.urlopen(url)
-                    download_local= open("./dane/zip/"+url.split('/')[-1], 'w')
-                    download_local.write(download_web.read())
-                    download_web.close()
-                    download_local.close()
-                pathtozip= str("dane/zip/"+date[4:6]+"-"+date[0:4]+".zip")
-                pathtotxt= "dane/"
-                sourcezip=zipfile.ZipFile(pathtozip, 'r')
-                for name in sourcezip.namelist():
-                    if name.find('.txt')!= -1:
-                        sourcezip.extract(name, pathtotxt)
-                sourcezip.close()          
+    def clear(self):
+        for filename in os.listdir("./dane/"):
+            os.remove("./dane/"+filename)
+        os.remove ("./cfg.py")
+        os.remove ("./cfg.pyc")
+        if debug:
+            print ("pliki tymczasowe usunięte")
 
-            data=open(str("dane/"+date+".txt")).read()
+    def init_db(self):
+        global db, metadata
+        db = create_engine("mysql://"+dane()[0]+":"+dane()[1]+"@"+dane()[2]+"/"+dane()[3]+"")
+        metadata = MetaData(db)
 
-        else:
-            import zipfile
-            import os
-            if not os.path.exists(str("dane/"+date+".txt")):
-                import zipfile              
-                if not os.path.exists(str("dane/zip/"+date[0:4]+".zip")):
-                    url=str("http://bossa.pl/pub/ciagle/omega/cgl/"+date[0:4]+".zip")
-                    download_web= urllib.urlopen(url)
-                    download_local= open("./dane/zip/"+url.split('/')[-1], 'w')
-                    download_local.write(download_web.read())
-                    download_web.close()
-                    download_local.close()
-                pathtozip= str("dane/zip/"+date[0:4]+".zip")
-                pathtotxt= "dane/zip/"
-                sourcezip=zipfile.ZipFile(pathtozip, 'r')
-                for name in sourcezip.namelist():
-                    if name.find('.zip')!= -1:
-                        sourcezip.extract(name, pathtotxt)
-                sourcezip.close()
-            #zipy rozpakowane, dalej jedziemy jak wczesniej... wiem, ze to nie jest ladne, ale dziala, sorry :P
-                if not os.path.exists(str("dane/zip/"+date[4:6]+"-"+date[0:4]+".zip")):
-                    url=str("http://bossa.pl/pub/ciagle/omega/cgl/"+date[4:6]+"-"+date[0:4]+".zip")
-                    download_web= urllib.urlopen(url)
-                    download_local= open("./dane/zip/"+url.split('/')[-1], 'w')
-                    download_local.write(download_web.read())
-                    download_web.close()
-                    download_local.close()
-                pathtozip= str("dane/zip/"+date[4:6]+"-"+date[0:4]+".zip")
-                pathtotxt= "dane/"
-                sourcezip=zipfile.ZipFile(pathtozip, 'r')
-                for name in sourcezip.namelist():
-                    if name.find('.txt')!= -1:
-                        sourcezip.extract(name, pathtotxt)
-                sourcezip.close()          
+    def create_db(self):
+        for filename in os.listdir("./dane/"):
+            event = Table(filename[0:-4].lower(), metadata,
+                Column("date", String(8), primary_key=True),
+                Column("value", Float))
+            event.drop()
+            event.create(checkfirst=True)
 
-            data=open(str("dane/"+date+".txt")).read()
-            
-        return(data)
-
-    def spolka (self, data):
-        firma=[]
-        for i in data.splitlines():
-            line=i.split(',')
-            element = line[0],line[4]
-            firma.append(element)
-        return(firma)
-
-    def preview (self, spolka):
-        for i in spolka:
-            print (i)
-            
-
+    def add(self, name, dat, val):
+        parser = Table(name, metadata, autoload=True)
+        insert=parser.insert()
+        insert.execute(date=dat, value=val)
+    
 notowanie=gielda()
-data = notowanie.getdata(date)
-spolka = notowanie.spolka(data)
-notowanie.preview(spolka)
+notowanie.update_files()
+spolki = notowanie.read(date_start, date_end)
+notowanie.init_db()
+notowanie.create_db()
+for spolka in spolki:
+    for i in spolka:
+        notowanie.add(i[0].lower(), i[1], float(i[2]))
+notowanie.clear()
