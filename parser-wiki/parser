@@ -47,7 +47,10 @@ class wiki_parser:
     ### Bezposrednie pobieranie danych ze strony wikipedii
 
     def pobierz_dane(self,rok, miesiac,dzien):
+        if dzien[:-1] == "0":
+            dzien = dzien[-1]
         strona = "http://en.wikipedia.org/wiki/Portal:Current_events/"+rok+"_"+miesiac+"_"+dzien
+        print strona
         (soup, url) = self.przegladarka(strona)
         for ul in soup.findAll("td", { "class" : "description" } ):
             wyniki = self.tagi_html(str(ul)).split("\n")
@@ -118,6 +121,14 @@ class wiki_parser:
     ### Funkcja przeliczajaca odcinki czasu, wykonuje funkcje dodawania do bazy
 
     def czas(self,rok_start,miesiac_start,dzien_start,rok_end,miesiac_end,dzien_end):
+        #dzien_start = str(dzien_start)
+        #dzien_end = str(dzien_end)
+        #if dzien_start[:-1] == "0":
+        #    dzien_start = dzien_start[-1]
+        #dzien_start = int(dzien_start)
+        #if dzien_end[:-1] == "0":
+        #    dzien_end = dzien_dzien[-1]
+        #dzien_end = int(dzien_end)
         delta = datetime.timedelta(1)
         start = datetime.datetime(rok_start,miesiac_start,dzien_start)
         end = datetime.datetime(rok_end,miesiac_end,dzien_end)
@@ -128,6 +139,10 @@ class wiki_parser:
             miesiac = tmp[1]
             t= self.miesiace(tmp[1])
             tmp[1]=t
+            #print tmp[2]
+            if tmp[2][:-1] == "0":
+                tmp[2] = tmp[2][-1]
+            #print tmp[2]
             lista = self.pobierz_dane(tmp[0],tmp[1],tmp[2])
             for i in range(len(lista)):
                 if lista[i][-1:] != ":":    # pozbywanie sie zbednych i pustych informacji z wikipedii
@@ -141,6 +156,12 @@ w = wiki_parser()
 
 zmienne_start = zmienne[1].split("-")
 zmienne_end = zmienne[2].split("-")
+
+if zmienne_start[2][:-1] == "0":
+    zmienne_start[2] = zmienne_start[2][-1]
+
+if zmienne_end[2][:-1] == "0":
+    zmienne_end[2] = zmienne_end[2][-1]
 
 rok_start = int(zmienne_start[0])
 miesiac_start = int(zmienne_start[1])
