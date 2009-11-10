@@ -13,9 +13,9 @@
 
 def dane():
     login = "root"     # login do bazy danych
-    haslo = "dupa"     # haslo do bazy danych
+    haslo = "fallout"     # haslo do bazy danych
     host = "localhost" # adres pod ktorym znajduje sie baza
-    baza = "parser"    # nazwa bazy danych
+    baza = "market"    # nazwa bazy danych
 
     ## Nic nie zmieniac ponizej tej linii
 

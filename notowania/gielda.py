@@ -72,7 +72,8 @@ class gielda:
     def create_db(self):
         for filename in os.listdir("./dane/"):
             event = Table(filename[0:-4].lower(), metadata,
-                Column("date", Date, primary_key=True),
+                Column("id", Integer, primary_key=True),
+                Column("date", Date),
                 Column("value", Float))
             event.drop(checkfirst=True)
             event.create(checkfirst=True)

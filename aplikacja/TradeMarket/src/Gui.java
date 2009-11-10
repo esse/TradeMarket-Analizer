@@ -1,5 +1,11 @@
 
+import index.*;
+
 import java.awt.event.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javassist.bytecode.Descriptor.Iterator;
 
@@ -92,13 +98,29 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
 		Connector connector = Connector.getConnector();
         String query = "from Event where date = '" + datefield.getText() + "'";
+        String query2 = "from Nasdaq where date = '" + datefield.getText() + "'";
 		List<Event> list = connector.getSession().createQuery(query).list();
+		List<Nasdaq> list2 = connector.getSession().createQuery(query2).list();
 		String events = "";
         for (java.util.Iterator<Event> i = list.iterator(); i.hasNext(); ) {
         	events = events + i.next().getDescription() + "\n";
         }
+        for (java.util.Iterator<Nasdaq> i = list2.iterator(); i.hasNext();) {
+        	events = events +  i.next().getValue() + "\n";
+        }
 //		Event event = (Event) list.get(0);
 		jTextArea1.append(events);
+		DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+		Date date;
+        try {
+			date = (Date)formatter.parse("2009-01-08");
+			Analyzer analyze = new Analyzer(date, 7, date);
+			analyze.analyze();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

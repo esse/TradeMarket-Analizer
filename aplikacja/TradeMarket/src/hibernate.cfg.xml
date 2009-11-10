@@ -14,5 +14,8 @@
 <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 
 <mapping resource="event.hbm.xml"/>
+<mapping resource="nasdaq.hbm.xml"/>
+<mapping resource="nikkei.hbm.xml"/>
+<mapping resource="dax.hbm.xml"/>
 </session-factory>
 </hibernate-configuration>
