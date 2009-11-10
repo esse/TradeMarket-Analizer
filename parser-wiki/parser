@@ -47,6 +47,7 @@ class wiki_parser:
     ### Bezposrednie pobieranie danych ze strony wikipedii
 
     def pobierz_dane(self,rok, miesiac,dzien):
+        global wyniki
         if dzien[:-1] == "0":
             dzien = dzien[-1]
         strona = "http://en.wikipedia.org/wiki/Portal:Current_events/"+rok+"_"+miesiac+"_"+dzien
