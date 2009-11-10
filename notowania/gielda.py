@@ -74,7 +74,7 @@ class gielda:
             event = Table(filename[0:-4].lower(), metadata,
                 Column("date", String(8), primary_key=True),
                 Column("value", Float))
-            event.drop()
+            event.drop(checkfirst=True)
             event.create(checkfirst=True)
 
     def add(self, name, dat, val):
