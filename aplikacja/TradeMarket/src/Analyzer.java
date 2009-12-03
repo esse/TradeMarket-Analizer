@@ -34,7 +34,7 @@ public class Analyzer {
 		return period;
 	}
 	
-	public String analyze(ArrayList<HashMap<Date, Float>> map, HashMap<Date, ArrayList<Event>> events, Float corelation, javax.swing.tree.DefaultMutableTreeNode node, boolean three) {
+	public void analyze(ArrayList<HashMap<Date, Float>> map, HashMap<Date, ArrayList<Event>> events, Float corelation, javax.swing.tree.DefaultMutableTreeNode node, boolean three) {
             
 //        String query;
 //        String[] indexes = { "Nasdaq", "Nikkei", "Dax" };
@@ -48,7 +48,7 @@ public class Analyzer {
 		float dq = 1;
 		float nkq = 1;
 //		float nq3;
-		String finals = "";
+//		String finals = "";
 		SimpleDateFormat formatter;
 		javax.swing.tree.DefaultMutableTreeNode addedNode;
 		formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -73,7 +73,7 @@ public class Analyzer {
         	}
         	if (three) {
         		if (java.lang.Math.abs(vd - vn) < corelation) {
-        			finals = finals + "dax i nasdaq - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vn) + "\n";
+//        			finals = finals + "dax i nasdaq - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vn) + "\n";
         			addedNode = new javax.swing.tree.DefaultMutableTreeNode("dax i nasdaq - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vd - vn));
         			node.insert(addedNode, i);
         			int j = 0;
@@ -86,7 +86,7 @@ public class Analyzer {
         			i++;
         		}	
         		if (java.lang.Math.abs(vd - vnk) < corelation) {
-        			finals = finals + "dax i nikkei - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "\n";
+//        			finals = finals + "dax i nikkei - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "\n";
         			addedNode = new javax.swing.tree.DefaultMutableTreeNode("dax i nikkei - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vd - vnk));
         			node.insert(addedNode, i);
         			int j = 0;
@@ -99,7 +99,7 @@ public class Analyzer {
         			i++;	
     			}
         		if (java.lang.Math.abs(vnk - vn) < corelation) {
-        			finals = finals + "nasdaq i nikkei - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vn - vnk) + "\n";
+//        			finals = finals + "nasdaq i nikkei - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vn - vnk) + "\n";
         			addedNode = new javax.swing.tree.DefaultMutableTreeNode("nasdaq i nikkei - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vn - vnk));
         			node.insert(addedNode, i);
         			int j = 0;
@@ -114,7 +114,7 @@ public class Analyzer {
         	}
         		 
     			if (java.lang.Math.abs(vd - vnk) < corelation && java.lang.Math.abs(vnk - vn) < corelation) {
-    				finals = finals + "nasdaq, nikkei i dax - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "," + java.lang.Math.abs(vnk - vn) + "\n";
+//    				finals = finals + "nasdaq, nikkei i dax - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "," + java.lang.Math.abs(vnk - vn) + "\n";
     				addedNode = new javax.swing.tree.DefaultMutableTreeNode("nasdaq, nikkei i dax - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "," + java.lang.Math.abs(vnk - vn));
     				node.insert(addedNode, i);
     				int j = 0;
@@ -129,7 +129,7 @@ public class Analyzer {
 //                	System.out.println(date + ": " + nikkeiMap.get(date));
                 
             }
-        return finals;
+//        return finals;
         }
         
         

@@ -6,9 +6,9 @@
 <hibernate-configuration>
 <session-factory>
 <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-<property name="connection.url">jdbc:mysql://localhost/market</property>
+<property name="connection.url">jdbc:mysql://localhost/esse_market</property>
 <property name="connection.username">root</property>
-<property name="connection.password">fallout</property>
+<property name="connection.password"></property>
 <property name="hibernate.show_sql">true</property>
 <property name="connection.autocommit">true</property>
 <property name="dialect">org.hibernate.dialect.MySQLDialect</property>

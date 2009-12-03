@@ -58,6 +58,6 @@ public class ChartDrawer {
 	        final DateAxis axis2 = new DateAxis("Data");
 	        plot.setDomainAxis(axis2);
 
-	        return chart.createBufferedImage(708,376);
+	        return chart.createBufferedImage(714,376);
 	    }
 	}
