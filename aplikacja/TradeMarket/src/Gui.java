@@ -31,7 +31,7 @@ import javassist.bytecode.Descriptor.Iterator;
  * @author esse
  */
 public class Gui extends javax.swing.JFrame implements ActionListener {
-
+	javax.swing.tree.DefaultMutableTreeNode treeNode1;
     /** Creates new form Gui */
     public Gui() {
         initComponents();
@@ -53,10 +53,23 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
         datefield = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         datefield2 = new javax.swing.JTextField();
+        corfield = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTree1 = new javax.swing.JTree();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Pobierz z bazy");
+        jButton1.setText("Uruchom");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -71,6 +84,28 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
             }
         });
 
+        corfield.setText("0.1");
+
+        jLabel2.setText("od:");
+
+        jLabel3.setText("do:");
+
+        jLabel4.setText("współczynnik powiązania:");
+
+        jLabel5.setText("Wykres");
+        jLabel5.setPreferredSize(new java.awt.Dimension(500, 300));
+
+        jCheckBox1.setText("Bierz pod uwage sytuacje gdy powiazane sa tylko dwa indeksy");
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Potencjalne punkty");
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane2.setViewportView(jTree1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -78,35 +113,68 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(934, 934, 934))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                            .addGap(154, 154, 154)
-                            .addComponent(jLabel1)
-                            .addGap(934, 934, 934))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(datefield, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                                .addComponent(datefield2, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
-                            .addGap(1088, 1088, 1088)))))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(26, 26, 26)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(datefield, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(63, 63, 63)
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(datefield2, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jCheckBox1)
+                                        .addGap(146, 146, 146))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(corfield, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(21, 21, 21)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(48, 48, 48)))
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(39, 39, 39))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
+                                .addContainerGap())))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
-                .addComponent(datefield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(datefield2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
-                .addGap(32, 32, 32))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(datefield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(datefield2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(corfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton1))
+                                .addGap(18, 18, 18)
+                                .addComponent(jCheckBox1))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -116,19 +184,35 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
         // TODO add your handling code here:
     }//GEN-LAST:event_datefield2ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField corfield;
     private javax.swing.JTextField datefield;
     private javax.swing.JTextField datefield2;
     private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 
     public void actionPerformed(ActionEvent ev) {
 		Connector connector = Connector.getConnector();
-        String query = "from Event where date = '" + datefield.getText() + "'";
+        String query = "from Event where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
         String query2 = "from Nasdaq where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
         String query3 = "from Dax where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
         String query4 = "from Nikkei where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
@@ -154,6 +238,7 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
         	HashMap<Date, Float> nasdaqMap = new HashMap<Date, Float>(nasdaq.size());
         	HashMap<Date, Float> daxMap = new HashMap<Date, Float>(dax.size());
         	HashMap<Date, Float> nikkeiMap = new HashMap<Date, Float>(nikkei.size());
+        	HashMap<Date, ArrayList<Event>> eventsMap = new HashMap<Date, ArrayList<Event>>(event.size());
 			date = (Date)formatter.parse(datefield.getText());
 			for (java.util.Iterator<Index> i = nasdaq.iterator(); i.hasNext();) {
 				Index ind = i.next();
@@ -167,17 +252,35 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
 				Index ind = i.next();
 				nikkeiMap.put(ind.getDate(), ind.getValue());
 	        }
+			
+			for (java.util.Iterator<Event> i = event.iterator(); i.hasNext();) {
+				Event evn = i.next();
+				if (eventsMap.containsKey(evn.getDate())) {
+					ArrayList<Event> evnlist;
+					evnlist = eventsMap.get(evn.getDate());
+					evnlist.add(evn);
+					
+				} else {
+					ArrayList<Event> evnlist = new ArrayList<Event>();
+					evnlist.add(evn);
+					eventsMap.put(evn.getDate(), evnlist);
+				}
+				
+			}
 			ArrayList<HashMap<Date, Float>> maparray;
 			maparray = new ArrayList<HashMap<Date, Float>>();
 			maparray.add(nasdaqMap);
 			maparray.add(daxMap);
 			maparray.add(nikkeiMap);
 			BufferedImage chart = ChartDrawer.createImage(maparray);
+			jLabel5.setText("");
+			jLabel5.setIcon(new ImageIcon(chart));
 			
-			jLabel1.setIcon(new ImageIcon(chart));
-			
-			Analyzer analyze = new Analyzer(date, 7, date);
-			jTextArea1.append(analyze.analyze(maparray));
+			Analyzer analyze = new Analyzer();
+//			treeNode1.insert(new javax.swing.tree.DefaultMutableTreeNode("Potencjalne punkty"), 0);
+			treeNode1.removeAllChildren();
+			jTextArea1.setText(analyze.analyze(maparray, eventsMap, Float.parseFloat(corfield.getText()), treeNode1, jCheckBox1.isSelected()));
+			jTree1.updateUI();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
