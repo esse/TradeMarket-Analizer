@@ -2,11 +2,17 @@
 import index.*;
 
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+
 import javassist.bytecode.Descriptor.Iterator;
 
 /*
@@ -45,6 +51,8 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         datefield = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        datefield2 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,41 +64,64 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
 
         datefield.setText("2008-10-06");
 
+        datefield2.setText("2009-01-01");
+        datefield2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                datefield2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
-                        .addComponent(datefield, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(126, 126, 126))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                            .addGap(154, 154, 154)
+                            .addComponent(jLabel1)
+                            .addGap(934, 934, 934))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(datefield, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                                .addComponent(datefield2, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE))
+                            .addGap(1088, 1088, 1088)))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addComponent(datefield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton1))
-                .addGap(26, 26, 26))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
+                .addComponent(datefield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(datefield2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addGap(32, 32, 32))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void datefield2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datefield2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_datefield2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField datefield;
+    private javax.swing.JTextField datefield2;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
@@ -98,24 +129,55 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
 		Connector connector = Connector.getConnector();
         String query = "from Event where date = '" + datefield.getText() + "'";
-        String query2 = "from Nasdaq where date = '" + datefield.getText() + "'";
-		List<Event> list = connector.getSession().createQuery(query).list();
-		List<Nasdaq> list2 = connector.getSession().createQuery(query2).list();
+        String query2 = "from Nasdaq where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
+        String query3 = "from Dax where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
+        String query4 = "from Nikkei where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
+		List<Event> event = connector.getSession().createQuery(query).list();
+		List<Index> nasdaq = connector.getSession().createQuery(query2).list();
+		List<Index> dax = connector.getSession().createQuery(query3).list();
+		List<Index> nikkei = connector.getSession().createQuery(query4).list();
+//		indexes.addAll(list3);
+//		indexes.addAll(list4);
+		
 		String events = "";
-        for (java.util.Iterator<Event> i = list.iterator(); i.hasNext(); ) {
-        	events = events + i.next().getDescription() + "\n";
-        }
-        for (java.util.Iterator<Nasdaq> i = list2.iterator(); i.hasNext();) {
-        	events = events +  i.next().getValue() + "\n";
-        }
+//        for (java.util.Iterator<Event> i = event.iterator(); i.hasNext(); ) {
+//        	events = events + i.next().getDescription() + "\n";
+//        }
+//        for (java.util.Iterator<Index> i = nasdaq.iterator(); i.hasNext();) {
+//        	events = events +  i.next().getValue() + "\n";
+//        }
 //		Event event = (Event) list.get(0);
-		jTextArea1.append(events);
+//		jTextArea1.append(events);
 		DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
 		Date date;
         try {
-			date = (Date)formatter.parse("2009-01-08");
+        	HashMap<Date, Float> nasdaqMap = new HashMap<Date, Float>(nasdaq.size());
+        	HashMap<Date, Float> daxMap = new HashMap<Date, Float>(dax.size());
+        	HashMap<Date, Float> nikkeiMap = new HashMap<Date, Float>(nikkei.size());
+			date = (Date)formatter.parse(datefield.getText());
+			for (java.util.Iterator<Index> i = nasdaq.iterator(); i.hasNext();) {
+				Index ind = i.next();
+				nasdaqMap.put(ind.getDate(), ind.getValue());
+	        }
+			for (java.util.Iterator<Index> i = dax.iterator(); i.hasNext();) {
+				Index ind = i.next();
+				daxMap.put(ind.getDate(), ind.getValue());
+	        }
+			for (java.util.Iterator<Index> i = nikkei.iterator(); i.hasNext();) {
+				Index ind = i.next();
+				nikkeiMap.put(ind.getDate(), ind.getValue());
+	        }
+			ArrayList<HashMap<Date, Float>> maparray;
+			maparray = new ArrayList<HashMap<Date, Float>>();
+			maparray.add(nasdaqMap);
+			maparray.add(daxMap);
+			maparray.add(nikkeiMap);
+			BufferedImage chart = ChartDrawer.createImage(maparray);
+			
+			jLabel1.setIcon(new ImageIcon(chart));
+			
 			Analyzer analyze = new Analyzer(date, 7, date);
-			analyze.analyze();
+			jTextArea1.append(analyze.analyze(maparray));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
