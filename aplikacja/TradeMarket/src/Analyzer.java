@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class Analyzer {
+public class Analyzer implements Runnable {
 	
 	private Date start;
 	
@@ -16,7 +16,22 @@ public class Analyzer {
 
 	private Integer period;
 	
+	public ArrayList<HashMap<Date, Float>> map;
+	public HashMap<Date, ArrayList<Event>> events;
+	public Float corelation;
+	public javax.swing.tree.DefaultMutableTreeNode node;
+	public boolean three;
+	public javax.swing.JTree jTree1;
 	
+	public Analyzer(ArrayList<HashMap<Date, Float>> _map, HashMap<Date, ArrayList<Event>> _events, Float _corelation, javax.swing.tree.DefaultMutableTreeNode _node, boolean _three, javax.swing.JTree _jTree1)
+	{
+		map = _map;
+		events = _events;
+		corelation = _corelation;
+		node = _node;
+		three = _three;
+		jTree1 = _jTree1;
+	}
 
 	public void setStart(Date date) {
 		this.start = date;
@@ -34,7 +49,7 @@ public class Analyzer {
 		return period;
 	}
 	
-	public void analyze(ArrayList<HashMap<Date, Float>> map, HashMap<Date, ArrayList<Event>> events, Float corelation, javax.swing.tree.DefaultMutableTreeNode node, boolean three) {
+	public void analyze() {
             
 //        String query;
 //        String[] indexes = { "Nasdaq", "Nikkei", "Dax" };
@@ -129,6 +144,7 @@ public class Analyzer {
 //                	System.out.println(date + ": " + nikkeiMap.get(date));
                 
             }
+        jTree1.updateUI();
 //        return finals;
         }
         
@@ -145,6 +161,16 @@ public class Analyzer {
 
 	public Date getFinish() {
 		return finish;
+	}
+
+	@Override
+	public void run() {
+		go();
+		
+	}
+	
+	public void go() {
+		analyze();
 	}
 
 }

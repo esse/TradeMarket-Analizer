@@ -18,19 +18,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class ChartDrawer {
+import javax.swing.ImageIcon;
+
+public class ChartDrawer implements Runnable {
 		
-//		public ArrayList<HashMap<Date, Float>> map;
-//		
-//		public BufferedImage chartPlot;
-//		
-//		public ChartDrawer(ArrayList<HashMap<Date, Float>> _map) {
-//			map = _map;
-//		}
-//		
-//		public
+		public ArrayList<HashMap<Date, Float>> map;
 		
-	    public static BufferedImage createImage(ArrayList<HashMap<Date, Float>> map) {
+		public BufferedImage chartPlot;
+		
+		public ChartDrawer(ArrayList<HashMap<Date, Float>> _map, javax.swing.JLabel _label) {
+			map = _map;
+			jLabel = _label;
+		}
+//		
+		public javax.swing.JLabel jLabel;
+		
+	    public void go() {
 	    	
 	        //         Create a simple XY chart
 	        XYSeries nasdaq = new XYSeries("Nasdaq");
@@ -69,6 +72,11 @@ public class ChartDrawer {
 	        final DateAxis axis2 = new DateAxis("Data");
 	        plot.setDomainAxis(axis2);
 
-	        return chart.createBufferedImage(714,376);
+	        jLabel.setIcon(new ImageIcon(chart.createBufferedImage(714,376)));
 	    }
+@Override
+public void run() {
+	go();
+	
+}
 	}

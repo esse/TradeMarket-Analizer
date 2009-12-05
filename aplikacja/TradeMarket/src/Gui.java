@@ -259,15 +259,23 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
 			maparray.add(nasdaqMap);
 			maparray.add(daxMap);
 			maparray.add(nikkeiMap);
-			BufferedImage chart = ChartDrawer.createImage(maparray);
 			jLabel5.setText("");
-			jLabel5.setIcon(new ImageIcon(chart));
+			Runnable drawer = new ChartDrawer(maparray, jLabel5);
+			Thread drawingThread = new Thread(drawer);
+			drawingThread.start();
+//			BufferedImage chart = ChartDrawer.createImage(maparray);
+//			jLabel5.setText("");
 			
-			Analyzer analyze = new Analyzer();
-//			treeNode1.insert(new javax.swing.tree.DefaultMutableTreeNode("Potencjalne punkty"), 0);
+//			jLabel5.setIcon(new ImageIcon(chart));
 			treeNode1.removeAllChildren();
-			analyze.analyze(maparray, eventsMap, Float.parseFloat(corfield.getText()), treeNode1, jCheckBox1.isSelected());
-			jTree1.updateUI();
+			Runnable analyze = new Analyzer(maparray, eventsMap, Float.parseFloat(corfield.getText()), treeNode1, jCheckBox1.isSelected(), jTree1);
+			
+//			treeNode1.insert(new javax.swing.tree.DefaultMutableTreeNode("Potencjalne punkty"), 0);
+			
+//			analyze.analyze();
+			Thread analyzerThread = new Thread(analyze);
+			analyzerThread.start();
+			
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
