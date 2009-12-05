@@ -16,21 +16,23 @@ public class Analyzer implements Runnable {
 
 	private Integer period;
 	
-	public ArrayList<HashMap<Date, Float>> map;
-	public HashMap<Date, ArrayList<Event>> events;
-	public Float corelation;
-	public javax.swing.tree.DefaultMutableTreeNode node;
-	public boolean three;
-	public javax.swing.JTree jTree1;
+	ArrayList<HashMap<Date, Float>> map;
+	HashMap<Date, ArrayList<Event>> events;
+	Float corelation;
+	javax.swing.tree.DefaultMutableTreeNode node;
+	boolean three;
+	javax.swing.JTree jTree1;
+	Thread fetcherThread;
+	Gui window;
 	
-	public Analyzer(ArrayList<HashMap<Date, Float>> _map, HashMap<Date, ArrayList<Event>> _events, Float _corelation, javax.swing.tree.DefaultMutableTreeNode _node, boolean _three, javax.swing.JTree _jTree1)
+	public Analyzer(Gui _window, Float _corelation, javax.swing.tree.DefaultMutableTreeNode _node, boolean _three, javax.swing.JTree _jTree1, Thread fetcherThread2)
 	{
-		map = _map;
-		events = _events;
+		window = _window;
 		corelation = _corelation;
 		node = _node;
 		three = _three;
 		jTree1 = _jTree1;
+		fetcherThread = fetcherThread2;
 	}
 
 	public void setStart(Date date) {
@@ -49,10 +51,11 @@ public class Analyzer implements Runnable {
 		return period;
 	}
 	
-	public void analyze() {
-            
-//        String query;
-//        String[] indexes = { "Nasdaq", "Nikkei", "Dax" };
+	public void analyze() throws InterruptedException {
+		node.removeAllChildren();
+		fetcherThread.join();
+		map = window.getmaparray();
+		events = window.geteventsmap();
         HashMap<Date, Float> nasdaqMap = map.get(0);
     	HashMap<Date, Float> daxMap = map.get(1);
 		HashMap<Date, Float> nikkeiMap = map.get(2);
@@ -62,8 +65,6 @@ public class Analyzer implements Runnable {
 		float vnk = 0;
 		float dq = 1;
 		float nkq = 1;
-//		float nq3;
-//		String finals = "";
 		SimpleDateFormat formatter;
 		javax.swing.tree.DefaultMutableTreeNode addedNode;
 		formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -71,8 +72,6 @@ public class Analyzer implements Runnable {
 		boolean created = false;
 		ArrayList<Event> evnlist;
         for (Date date : nasdaqMap.keySet()) {
-//        	nasdaq.add(date.getTime(), nasdaqMap.get(date));
-//        	System.out.println(date + ": " + nasdaqMap.get(date));
         	if (nasdaqMap.get(date) != null) {
         		vn = nasdaqMap.get(date) / nq;
         		
@@ -88,7 +87,6 @@ public class Analyzer implements Runnable {
         	}
         	if (three) {
         		if (java.lang.Math.abs(vd - vn) < corelation) {
-//        			finals = finals + "dax i nasdaq - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vn) + "\n";
         			addedNode = new javax.swing.tree.DefaultMutableTreeNode("dax i nasdaq - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vd - vn));
         			node.insert(addedNode, i);
         			int j = 0;
@@ -101,7 +99,6 @@ public class Analyzer implements Runnable {
         			i++;
         		}	
         		if (java.lang.Math.abs(vd - vnk) < corelation) {
-//        			finals = finals + "dax i nikkei - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "\n";
         			addedNode = new javax.swing.tree.DefaultMutableTreeNode("dax i nikkei - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vd - vnk));
         			node.insert(addedNode, i);
         			int j = 0;
@@ -114,7 +111,6 @@ public class Analyzer implements Runnable {
         			i++;	
     			}
         		if (java.lang.Math.abs(vnk - vn) < corelation) {
-//        			finals = finals + "nasdaq i nikkei - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vn - vnk) + "\n";
         			addedNode = new javax.swing.tree.DefaultMutableTreeNode("nasdaq i nikkei - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vn - vnk));
         			node.insert(addedNode, i);
         			int j = 0;
@@ -129,7 +125,6 @@ public class Analyzer implements Runnable {
         	}
         		 
     			if (java.lang.Math.abs(vd - vnk) < corelation && java.lang.Math.abs(vnk - vn) < corelation) {
-//    				finals = finals + "nasdaq, nikkei i dax - Data: " + date + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "," + java.lang.Math.abs(vnk - vn) + "\n";
     				addedNode = new javax.swing.tree.DefaultMutableTreeNode("nasdaq, nikkei i dax - Data: " + formatter.format(date) + ", współczynnik: " + java.lang.Math.abs(vd - vnk) + "," + java.lang.Math.abs(vnk - vn));
     				node.insert(addedNode, i);
     				int j = 0;
@@ -165,12 +160,13 @@ public class Analyzer implements Runnable {
 
 	@Override
 	public void run() {
-		go();
+		try {
+			analyze();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-	}
-	
-	public void go() {
-		analyze();
 	}
 
 }

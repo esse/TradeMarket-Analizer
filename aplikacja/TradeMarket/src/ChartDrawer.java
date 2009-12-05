@@ -22,23 +22,31 @@ import javax.swing.ImageIcon;
 
 public class ChartDrawer implements Runnable {
 		
-		public ArrayList<HashMap<Date, Float>> map;
+		ArrayList<HashMap<Date, Float>> map;
 		
-		public BufferedImage chartPlot;
+		BufferedImage chartPlot;
 		
-		public ChartDrawer(ArrayList<HashMap<Date, Float>> _map, javax.swing.JLabel _label) {
-			map = _map;
+		Thread fetcherThread;
+		
+		Gui window;
+		
+		public ChartDrawer(Gui _window, javax.swing.JLabel _label, Thread fetcherThread2) {
+//			map = _map;
+			window = _window;
 			jLabel = _label;
+			fetcherThread = fetcherThread2;
 		}
 //		
-		public javax.swing.JLabel jLabel;
+		javax.swing.JLabel jLabel;
 		
-	    public void go() {
+	    public void go() throws InterruptedException {
 	    	
 	        //         Create a simple XY chart
 	        XYSeries nasdaq = new XYSeries("Nasdaq");
 	        XYSeries dax = new XYSeries("Dax");
 	        XYSeries nikkei = new XYSeries("Nikkei");
+	        fetcherThread.join();
+	        map = window.getmaparray();
 	        HashMap<Date, Float> nasdaqMap = map.get(0);
         	HashMap<Date, Float> daxMap = map.get(1);
     		HashMap<Date, Float> nikkeiMap = map.get(2);
@@ -71,12 +79,17 @@ public class ChartDrawer implements Runnable {
 	        final XYPlot plot = chart.getXYPlot();
 	        final DateAxis axis2 = new DateAxis("Data");
 	        plot.setDomainAxis(axis2);
-
+	        jLabel.setText("");
 	        jLabel.setIcon(new ImageIcon(chart.createBufferedImage(714,376)));
 	    }
 @Override
 public void run() {
-	go();
+	try {
+		go();
+	} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	
 }
 	}

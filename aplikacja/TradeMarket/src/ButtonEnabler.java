@@ -1,9 +1,9 @@
 
 public class ButtonEnabler implements Runnable {
 
-	public javax.swing.JButton button;
-	public Thread first;
-	public Thread second;
+	javax.swing.JButton button;
+	Thread first;
+	Thread second;
 	
 	public ButtonEnabler(javax.swing.JButton _button, Thread _first, Thread _second) {
 		button = _button;

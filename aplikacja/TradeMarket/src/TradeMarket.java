@@ -16,6 +16,7 @@ public class TradeMarket {
 			Connector connector = Connector.getConnector();
 			Session session = connector.getSession();
 			Gui window = new Gui();
+			window.setTitle("TradeMarket Analizer");
 			window.setVisible(true);
 		}
 		catch(Exception e){

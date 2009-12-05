@@ -1,0 +1,10 @@
+Application for some kind of analysis of trademarket data.
+
+Info about algoritm coming soon.
+
+Known issues:
+- java application has hardcoded db name and user (user: root, pw: empty, db: esse_market
+
+Wiki parser made by Grzew
+Trademarket data parser made by Manequin
+Trademarket Analysis made by Esse

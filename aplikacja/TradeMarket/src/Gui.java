@@ -32,6 +32,9 @@ import javassist.bytecode.Descriptor.Iterator;
  */
 public class Gui extends javax.swing.JFrame implements ActionListener {
 	javax.swing.tree.DefaultMutableTreeNode treeNode1;
+	ArrayList<HashMap<Date, Float>> maparray;
+	HashMap<Date, ArrayList<Event>> eventsMap;
+	
     /** Creates new form Gui */
     public Gui() {
         initComponents();
@@ -198,84 +201,23 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
     // End of variables declaration//GEN-END:variables
 
     public void actionPerformed(ActionEvent ev) {
-    	jButton1.setEnabled(false);
-		Connector connector = Connector.getConnector();
-        String query = "from Event where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
-        String query2 = "from Nasdaq where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
-        String query3 = "from Dax where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
-        String query4 = "from Nikkei where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
-		List<Event> event = connector.getSession().createQuery(query).list();
-		List<Index> nasdaq = connector.getSession().createQuery(query2).list();
-		List<Index> dax = connector.getSession().createQuery(query3).list();
-		List<Index> nikkei = connector.getSession().createQuery(query4).list();
-//		indexes.addAll(list3);
-//		indexes.addAll(list4);
-		
-		String events = "";
-//        for (java.util.Iterator<Event> i = event.iterator(); i.hasNext(); ) {
-//        	events = events + i.next().getDescription() + "\n";
-//        }
-//        for (java.util.Iterator<Index> i = nasdaq.iterator(); i.hasNext();) {
-//        	events = events +  i.next().getValue() + "\n";
-//        }
-//		Event event = (Event) list.get(0);
-//		jTextArea1.append(events);
-		DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+    	DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
 		Date date;
         try {
-        	HashMap<Date, Float> nasdaqMap = new HashMap<Date, Float>(nasdaq.size());
-        	HashMap<Date, Float> daxMap = new HashMap<Date, Float>(dax.size());
-        	HashMap<Date, Float> nikkeiMap = new HashMap<Date, Float>(nikkei.size());
-        	HashMap<Date, ArrayList<Event>> eventsMap = new HashMap<Date, ArrayList<Event>>(event.size());
 			date = (Date)formatter.parse(datefield.getText());
-			for (java.util.Iterator<Index> i = nasdaq.iterator(); i.hasNext();) {
-				Index ind = i.next();
-				nasdaqMap.put(ind.getDate(), ind.getValue());
-	        }
-			for (java.util.Iterator<Index> i = dax.iterator(); i.hasNext();) {
-				Index ind = i.next();
-				daxMap.put(ind.getDate(), ind.getValue());
-	        }
-			for (java.util.Iterator<Index> i = nikkei.iterator(); i.hasNext();) {
-				Index ind = i.next();
-				nikkeiMap.put(ind.getDate(), ind.getValue());
-	        }
-			
-			for (java.util.Iterator<Event> i = event.iterator(); i.hasNext();) {
-				Event evn = i.next();
-				if (eventsMap.containsKey(evn.getDate())) {
-					ArrayList<Event> evnlist;
-					evnlist = eventsMap.get(evn.getDate());
-					evnlist.add(evn);
-					
-				} else {
-					ArrayList<Event> evnlist = new ArrayList<Event>();
-					evnlist.add(evn);
-					eventsMap.put(evn.getDate(), evnlist);
-				}
-				
-			}
-			ArrayList<HashMap<Date, Float>> maparray;
-			maparray = new ArrayList<HashMap<Date, Float>>();
-			maparray.add(nasdaqMap);
-			maparray.add(daxMap);
-			maparray.add(nikkeiMap);
-			jLabel5.setText("");
-			Runnable drawer = new ChartDrawer(maparray, jLabel5);
-			Thread drawingThread = new Thread(drawer);
-			drawingThread.start();
-//			BufferedImage chart = ChartDrawer.createImage(maparray);
-//			jLabel5.setText("");
-			
-//			jLabel5.setIcon(new ImageIcon(chart));
-			treeNode1.removeAllChildren();
-			Runnable analyze = new Analyzer(maparray, eventsMap, Float.parseFloat(corfield.getText()), treeNode1, jCheckBox1.isSelected(), jTree1);
-			
-//			treeNode1.insert(new javax.swing.tree.DefaultMutableTreeNode("Potencjalne punkty"), 0);
-			
-//			analyze.analyze();
+			jButton1.setEnabled(false);
+//			maparray = new ArrayList<HashMap<Date, Float>>();
+//			eventsMap = new HashMap<Date, ArrayList<Event>>();
+			DataFetcher fetcher = new DataFetcher(datefield.getText(), datefield2.getText(), this);
+			Thread fetcherThread = new Thread(fetcher);
+			fetcherThread.start();
+			Runnable analyze = new Analyzer(this, Float.parseFloat(corfield.getText()), treeNode1, jCheckBox1.isSelected(), jTree1, fetcherThread);
 			Thread analyzerThread = new Thread(analyze);
 			analyzerThread.start();
+//			fetcher.go();
+			Runnable drawer = new ChartDrawer(this, jLabel5, fetcherThread);
+			Thread drawingThread = new Thread(drawer);
+			drawingThread.start();
 			Runnable enabler = new ButtonEnabler(jButton1, drawingThread, analyzerThread);
 			Thread enableThread = new Thread(enabler);
 			enableThread.start();
@@ -286,4 +228,22 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
 
 	}
 
+	public void seteventsMap(HashMap<Date, ArrayList<Event>> eventsMap2) {
+		eventsMap = eventsMap2;
+		
+	}
+
+	public void setmaparray(ArrayList<HashMap<Date, Float>> mapArray2) {
+		maparray = mapArray2;
+		
+	}
+	
+	public ArrayList<HashMap<Date, Float>> getmaparray() {
+		return maparray;
+	}
+
+	public HashMap<Date, ArrayList<Event>> geteventsmap(){
+		return eventsMap;
+	}
+	
 }
