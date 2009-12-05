@@ -19,6 +19,17 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class ChartDrawer {
+		
+//		public ArrayList<HashMap<Date, Float>> map;
+//		
+//		public BufferedImage chartPlot;
+//		
+//		public ChartDrawer(ArrayList<HashMap<Date, Float>> _map) {
+//			map = _map;
+//		}
+//		
+//		public
+		
 	    public static BufferedImage createImage(ArrayList<HashMap<Date, Float>> map) {
 	    	
 	        //         Create a simple XY chart
