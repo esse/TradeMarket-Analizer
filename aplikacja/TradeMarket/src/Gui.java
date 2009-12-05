@@ -198,6 +198,7 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
     // End of variables declaration//GEN-END:variables
 
     public void actionPerformed(ActionEvent ev) {
+    	jButton1.setEnabled(false);
 		Connector connector = Connector.getConnector();
         String query = "from Event where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
         String query2 = "from Nasdaq where date >= '" + datefield.getText() + "'and date <= '" + datefield2.getText() + "'";
@@ -275,7 +276,9 @@ public class Gui extends javax.swing.JFrame implements ActionListener {
 //			analyze.analyze();
 			Thread analyzerThread = new Thread(analyze);
 			analyzerThread.start();
-			
+			Runnable enabler = new ButtonEnabler(jButton1, drawingThread, analyzerThread);
+			Thread enableThread = new Thread(enabler);
+			enableThread.start();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
