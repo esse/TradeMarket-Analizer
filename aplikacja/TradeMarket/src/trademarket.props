@@ -1,0 +1,3 @@
+hibernate.connection.username=essemarket
+hibernate.connection.password=tFu2wxwDMy8LsU9b
+hibernate.connection.url=jdbc:mysql://roflcopter.pl:3306/essemarket
