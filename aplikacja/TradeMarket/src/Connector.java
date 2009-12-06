@@ -42,10 +42,10 @@ public class Connector {
 		prop.put("hibernate.connection.url", "jdbc:mysql://localhost/trademarket");
 		prop.put("hibernate.connection.password", "");
 		System.out.println("Config file not found - using defaults");
-		configuration.addProperties(prop);
 		} catch (IOException e) {
 		e.printStackTrace();
 		}
+		configuration.addProperties(prop);
 		SessionFactory sessionFactory = configuration.buildSessionFactory();
 		session = sessionFactory.openSession();
 		
