@@ -40,9 +40,9 @@ public class Connector {
 		try {
 			prop.load(new FileInputStream("trademarket.props"));			
 		} catch (FileNotFoundException e) {
-		prop.put("hibernate.connection.username", "root");
-		prop.put("hibernate.connection.url", "jdbc:mysql://localhost/trademarket");
-		prop.put("hibernate.connection.password", "");
+		prop.put("hibernate.connection.username", "essemarket");
+		prop.put("hibernate.connection.url", "jdbc:mysql://roflcopter.pl:3306/essemarket");
+		prop.put("hibernate.connection.password", "tFu2wxwDMy8LsU9b");
 		System.out.println("Config file not found - using defaults");
 		} catch (IOException e) {
 		e.printStackTrace();

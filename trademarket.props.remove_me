@@ -1,0 +1,3 @@
+hibernate.connection.username=root
+hibernate.connection.password=
+hibernate.connection.url=jdbc:mysql://localhost/essemarket

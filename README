@@ -1,9 +1,8 @@
 Application for some kind of analysis of trademarket data.
 
-Info about algoritm coming soon.
+Info about used simple analysis algoritm coming soon.
 
-Known issues:
-- java application has hardcoded db name and user (user: root, pw: empty, db: esse_market
+Default settings use internet database, hosted on mine server.
 
 Wiki parser made by Grzew
 Trademarket data parser made by Manequin
